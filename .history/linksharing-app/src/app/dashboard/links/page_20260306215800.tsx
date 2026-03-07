@@ -45,15 +45,13 @@ export default function LinksPage() {
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [savedMessage, setSavedMessage] = useState("");
-  const [username, setUsername] = useState("");
-  const [avatarUrl, setAvatarUrl] = useState("");
 
   const sensors = useSensors(
     useSensor(PointerSensor, {
       activationConstraint: {
         distance: 8,
       },
-    }),
+    })
   );
 
   const loadLinks = useCallback(async () => {
@@ -65,17 +63,6 @@ export default function LinksPage() {
       setLoading(false);
       return;
     }
-
-    const { data: profile } = await supabase
-    .from("profiles")
-    .select("username, avatar_url")
-    .eq("id", user.id)
-    .single();
-
-  if (profile) {
-    setUsername(profile.username || "");
-    setAvatarUrl(profile.avatar_url || "");
-  }
 
     const { data, error } = await supabase
       .from("links")
@@ -116,7 +103,9 @@ export default function LinksPage() {
 
   function updateLink(id: string, field: "platform" | "url", value: string) {
     setLinks((prev) =>
-      prev.map((link) => (link.id === id ? { ...link, [field]: value } : link)),
+      prev.map((link) =>
+        link.id === id ? { ...link, [field]: value } : link
+      )
     );
   }
 
@@ -127,7 +116,7 @@ export default function LinksPage() {
         .map((link, index) => ({
           ...link,
           sort_order: index,
-        })),
+        }))
     );
   }
 
@@ -240,7 +229,7 @@ export default function LinksPage() {
     await loadLinks();
     setSaving(false);
     setSavedMessage("Your changes have been successfully saved!");
-
+    
     setTimeout(() => {
       setSavedMessage("");
     }, 2500);
@@ -256,7 +245,11 @@ export default function LinksPage() {
 
   return (
     <div className="flex flex-col gap-6 lg:flex-row">
-      <PhonePreview username={username} avatarUrl={avatarUrl} links={links} />
+      <PhonePreview
+  username={username}
+  avatarUrl={avatarUrl}
+  links={links}
+/>
 
       <section className="flex-1 rounded-xl bg-white">
         <div className="p-6 md:p-10">

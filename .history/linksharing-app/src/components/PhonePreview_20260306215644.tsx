@@ -53,7 +53,7 @@ function getPlatformStyle(platform: string) {
   );
 }
 
-export default function PhonePreview({ username, avatarUrl, links }: Props) {
+export default function PhonePreview({ username, ava links }: Props) {
   return (
     <aside className="hidden lg:flex w-full max-w-[420px] items-center justify-center rounded-[24px] bg-white p-6 shadow-sm">
       <div className="relative h-[631px] w-[307px] rounded-[40px] border-[1.5px] border-[#737373] bg-white px-6 pt-14 pb-8 shadow-sm">

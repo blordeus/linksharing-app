@@ -66,17 +66,6 @@ export default function LinksPage() {
       return;
     }
 
-    const { data: profile } = await supabase
-    .from("profiles")
-    .select("username, avatar_url")
-    .eq("id", user.id)
-    .single();
-
-  if (profile) {
-    setUsername(profile.username || "");
-    setAvatarUrl(profile.avatar_url || "");
-  }
-
     const { data, error } = await supabase
       .from("links")
       .select("*")

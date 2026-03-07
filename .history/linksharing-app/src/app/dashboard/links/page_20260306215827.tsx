@@ -45,8 +45,6 @@ export default function LinksPage() {
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [savedMessage, setSavedMessage] = useState("");
-  const [username, setUsername] = useState("");
-  const [avatarUrl, setAvatarUrl] = useState("");
 
   const sensors = useSensors(
     useSensor(PointerSensor, {
@@ -65,17 +63,6 @@ export default function LinksPage() {
       setLoading(false);
       return;
     }
-
-    const { data: profile } = await supabase
-    .from("profiles")
-    .select("username, avatar_url")
-    .eq("id", user.id)
-    .single();
-
-  if (profile) {
-    setUsername(profile.username || "");
-    setAvatarUrl(profile.avatar_url || "");
-  }
 
     const { data, error } = await supabase
       .from("links")

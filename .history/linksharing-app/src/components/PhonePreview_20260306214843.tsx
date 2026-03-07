@@ -1,25 +1,25 @@
-"use client";
+"use client"
 
-import Image from "next/image";
+import Image from "next/image"
 
 type Link = {
-  id: string;
-  platform: string;
-  url: string;
-};
+  id: string
+  platform: string
+  url: string
+}
 
 type Props = {
-  username?: string;
-  avatarUrl?: string;
-  links: Link[];
-};
+  username?: string
+  avatarUrl?: string
+  links: Link[]
+}
 
 const platformStyles: Record<
   string,
   {
-    bg: string;
-    text: string;
-    icon?: string;
+    bg: string
+    text: string
+    icon?: string
   }
 > = {
   github: {
@@ -42,7 +42,7 @@ const platformStyles: Record<
     bg: "#FFFFFF",
     text: "#333333",
   },
-};
+}
 
 function getPlatformStyle(platform: string) {
   return (
@@ -50,10 +50,10 @@ function getPlatformStyle(platform: string) {
       bg: "#633CFF",
       text: "#FFFFFF",
     }
-  );
+  )
 }
 
-export default function PhonePreview({ username, avatarUrl, links }: Props) {
+export default function PhonePreview({ username, links }: Props) {
   return (
     <aside className="hidden lg:flex w-full max-w-[420px] items-center justify-center rounded-[24px] bg-white p-6 shadow-sm">
       <div className="relative h-[631px] w-[307px] rounded-[40px] border-[1.5px] border-[#737373] bg-white px-6 pt-14 pb-8 shadow-sm">
@@ -62,17 +62,7 @@ export default function PhonePreview({ username, avatarUrl, links }: Props) {
 
         {/* profile section */}
         <div className="flex flex-col items-center">
-          {avatarUrl ? (
-            <Image
-              src={avatarUrl}
-              alt={username || "Profile avatar"}
-              width={96}
-              height={96}
-              className="mb-6 h-24 w-24 rounded-full border-4 border-[#633CFF] object-cover"
-            />
-          ) : (
-            <div className="mb-6 h-24 w-24 rounded-full border-4 border-[#633CFF] bg-[#EEEEEE]" />
-          )}
+          <div className="mb-6 h-24 w-24 rounded-full border-4 border-[#633CFF] bg-[#EEEEEE]" />
 
           <div className="mb-3 min-h-[32px]">
             {username ? (
@@ -92,12 +82,15 @@ export default function PhonePreview({ username, avatarUrl, links }: Props) {
           {links.length === 0 ? (
             <>
               {Array.from({ length: 5 }).map((_, i) => (
-                <div key={i} className="h-11 rounded-lg bg-[#EEEEEE]" />
+                <div
+                  key={i}
+                  className="h-11 rounded-lg bg-[#EEEEEE]"
+                />
               ))}
             </>
           ) : (
             links.slice(0, 5).map((link) => {
-              const style = getPlatformStyle(link.platform);
+              const style = getPlatformStyle(link.platform)
 
               return (
                 <a
@@ -118,11 +111,11 @@ export default function PhonePreview({ username, avatarUrl, links }: Props) {
                   <span className="truncate">{link.platform}</span>
                   <span aria-hidden="true">→</span>
                 </a>
-              );
+              )
             })
           )}
         </div>
       </div>
     </aside>
-  );
+  )
 }
