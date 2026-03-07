@@ -1,36 +1,191 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
 
-## Getting Started
+# Link Sharing App
 
-First, run the development server:
+A full-stack link sharing platform where users can create a profile, manage their links, and share a public page containing all of their social and professional links.
 
-```bash
-npm run dev
-# or
+Live app:
+
+https://linksharing-app-five.vercel.app
+
+Users can build a profile, add links to various platforms, and share a public page such as:
+
+https://linksharing-app-five.vercel.app/u/username
+
+---
+
+# Features
+
+## Authentication
+- User signup and login
+- Session handling with Supabase Auth
+- Protected dashboard routes using middleware
+
+## Profile Management
+- Edit username
+- Add first name and last name
+- Store email information
+- Copy public profile link
+
+## Link Management
+- Add multiple platform links
+- Edit existing links
+- Delete links
+- Automatic URL normalization
+- Ordered links stored in the database
+
+## Public Profile Page
+Each user gets a shareable page displaying their profile and links.
+
+Example:
+/u/username
+
+Links open the associated platforms in a new tab.
+
+## Live Preview
+The dashboard includes a phone preview showing how the public profile will appear.
+
+## Deployment
+The application is deployed on **Vercel** and uses **Supabase** for backend services.
+
+---
+
+# Tech Stack
+
+## Frontend
+- Next.js (App Router)
+- React
+- Tailwind CSS
+
+## Backend
+- Supabase Auth
+- Supabase Postgres
+- Supabase SSR Client
+
+## Deployment
+- Vercel
+
+---
+
+# Project Structure
+
+src
+ ├ app
+ │ ├ dashboard
+ │ │ ├ links
+ │ │ └ profile
+ │ ├ login
+ │ ├ signup
+ │ ├ u
+ │ │ └ [username]
+ │ └ page.tsx
+ │
+ ├ components
+ │ ├ CopyProfileLinkButton
+ │ ├ LogoutButton
+ │ ├ PhonePreview
+ │
+ ├ lib
+ │ └ supabase
+ │    ├ browser.ts
+ │    └ server.ts
+ │
+ └ middleware.ts
+
+---
+
+# Database Schema
+
+## profiles
+
+| column | description |
+|------|------|
+| id | Supabase auth user id |
+| username | public profile identifier |
+| first_name | user first name |
+| last_name | user last name |
+| email | user email |
+| avatar_url | (future enhancement) |
+
+## links
+
+| column | description |
+|------|------|
+| id | unique link id |
+| user_id | reference to profile |
+| platform | platform name |
+| url | external link |
+| sort_order | ordering index |
+
+---
+
+# Environment Variables
+
+Create a `.env.local` file:
+
+NEXT_PUBLIC_SUPABASE_URL=
+NEXT_PUBLIC_SUPABASE_ANON_KEY=
+
+These values come from your Supabase project settings.
+
+---
+
+# Running the Project Locally
+
+Install dependencies:
+
+yarn install
+
+Run the development server:
+
 yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+The app will run at:
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+http://localhost:3000
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+---
 
-## Learn More
+# Authentication Configuration
 
-To learn more about Next.js, take a look at the following resources:
+In Supabase, configure:
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+Site URL:
+https://linksharing-app-five.vercel.app
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+Redirect URLs:
+http://localhost:3000/**
+https://linksharing-app-five.vercel.app/**
 
-## Deploy on Vercel
+---
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+# Deployment
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+The project is deployed with **Vercel**.
+
+Steps:
+
+1. Push repository to GitHub
+2. Import the project into Vercel
+3. Add environment variables
+4. Deploy
+
+Vercel automatically builds and deploys the Next.js application.
+
+---
+
+# Future Improvements
+
+Planned UI and feature enhancements:
+
+- Platform icons and branded link buttons
+- Profile image upload using Supabase Storage
+- Improved mobile responsiveness
+- Visual polish to match the Frontend Mentor design
+- Drag-and-drop link ordering
+- Enhanced preview component
+
+---
+
+# License
+
+This project was built as part of a Frontend Mentor challenge and is intended for educational and portfolio use.
