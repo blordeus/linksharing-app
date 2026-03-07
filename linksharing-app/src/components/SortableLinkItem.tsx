@@ -2,6 +2,7 @@
 
 import { useSortable } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
+import Image from "next/image";
 
 type LinkItem = {
   id: string;
@@ -85,7 +86,12 @@ export default function SortableLinkItem({
           className="flex cursor-grab items-center gap-2 text-sm font-semibold text-[#737373] active:cursor-grabbing"
           aria-label={`Drag link ${index + 1}`}
         >
-          <span className="text-base leading-none">⋮⋮</span>
+          <Image
+            src="/assets/images/icon-drag-and-drop.svg"
+            alt=""
+            width={12}
+            height={6}
+          />
           <span>Link #{index + 1}</span>
         </button>
 

@@ -19,9 +19,12 @@ export default function ProfilePage() {
   const [avatarUrl, setAvatarUrl] = useState("");
   const [avatarFile, setAvatarFile] = useState<File | null>(null);
   const [avatarPreview, setAvatarPreview] = useState("");
+  const [themeColor, setThemeColor] = useState("#633CFF");
 
   const [toastMessage, setToastMessage] = useState("");
   const [toastType, setToastType] = useState<"success" | "error">("success");
+
+  const hasChanges = true;
 
   function showToast(message: string, type: "success" | "error" = "success") {
     setToastMessage(message);
@@ -61,6 +64,7 @@ export default function ProfilePage() {
         setLastName(data.last_name || "");
         setEmail(data.email || "");
         setAvatarUrl(data.avatar_url || "");
+        setThemeColor(data.theme_color || "#633CFF");
       }
 
       setLoading(false);
@@ -132,6 +136,7 @@ export default function ProfilePage() {
         last_name: lastName.trim(),
         email: email.trim(),
         avatar_url: uploadedAvatarUrl,
+        theme_color: themeColor,
       });
 
       if (error) {
@@ -220,6 +225,25 @@ export default function ProfilePage() {
             </div>
 
             <div className="rounded-xl bg-[#FAFAFA] p-5 md:p-6">
+              <div className="grid gap-4 md:grid-cols-[160px_1fr] md:items-center">
+                <label className="text-sm text-[#737373]">Theme Color</label>
+
+                <div className="flex items-center gap-3">
+                  <input
+                    type="color"
+                    value={themeColor}
+                    onChange={(e) => setThemeColor(e.target.value)}
+                    className="h-12 w-16 cursor-pointer rounded border border-[#D9D9D9] bg-white"
+                  />
+
+                  <span className="text-sm text-[#737373]">
+                    Choose your profile accent color
+                  </span>
+                </div>
+              </div>
+            </div>
+
+            <div className="rounded-xl bg-[#FAFAFA] p-5 md:p-6">
               <div className="space-y-6">
                 <div className="grid gap-2 md:grid-cols-[160px_1fr] md:items-center">
                   <label htmlFor="username" className="text-sm text-[#737373]">
@@ -281,7 +305,7 @@ export default function ProfilePage() {
         <div className="border-t border-[#D9D9D9] p-4 md:flex md:items-center md:justify-end md:px-10 md:py-6">
           <button
             onClick={saveProfile}
-            disabled={saving}
+            disabled={saving || !hasChanges}
             className="w-full rounded-lg bg-[#633CFF] px-6 py-3 text-[16px] font-semibold text-white transition hover:bg-[#7B5CFF] disabled:cursor-not-allowed disabled:opacity-50 md:w-auto"
           >
             {saving ? "Saving..." : "Save"}

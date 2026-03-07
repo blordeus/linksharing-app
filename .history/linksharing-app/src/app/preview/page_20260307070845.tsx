@@ -54,7 +54,6 @@ export default async function PreviewPage() {
 
   const username = profile?.username || "";
   const avatarUrl = profile?.avatar_url || "";
-  const themeColor = profile?.theme_color || "#633CFF";
 
   return (
     <main className="min-h-screen bg-[#FAFAFA] px-4 py-4 md:px-6 md:py-6">
@@ -75,18 +74,12 @@ export default async function PreviewPage() {
         </header>
 
         <div className="relative mt-6 min-h-[calc(100vh-140px)] overflow-hidden rounded-[32px] bg-[#FAFAFA]">
-          <div
-            className="hidden h-[357px] rounded-b-[32px] md:block"
-            style={{ backgroundColor: themeColor }}
-          />
+          <div className="hidden h-[357px] rounded-b-[32px] bg-[#633CFF] md:block" />
 
           <div className="relative md:-mt-[220px] md:px-4 md:pb-16">
             <div className="mx-auto w-full max-w-[349px] rounded-[24px] bg-white px-6 pb-12 pt-12 shadow-[0_0_32px_rgba(0,0,0,0.08)] md:px-10">
               <div className="text-center">
-                <div
-                  className="mx-auto mb-6 h-24 w-24 overflow-hidden rounded-full border-4 bg-[#EEEEEE]"
-                  style={{ borderColor: themeColor }}
-                >
+                <div className="mx-auto mb-6 h-24 w-24 overflow-hidden rounded-full border-4 border-[#633CFF] bg-[#EEEEEE]">
                   {avatarUrl ? (
                     <Image
                       src={avatarUrl}
@@ -128,7 +121,7 @@ export default async function PreviewPage() {
                         className="flex min-h-[56px] items-center justify-between rounded-lg px-4 text-[16px] font-semibold transition hover:opacity-90"
                         style={{
                           backgroundColor:
-                            platform?.backgroundColor || themeColor,
+                            platform?.backgroundColor || "#1A1A1A",
                           color: platform?.textColor || "#FFFFFF",
                           border:
                             platform?.backgroundColor === "#FFFFFF"

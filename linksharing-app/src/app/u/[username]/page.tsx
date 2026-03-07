@@ -1,297 +1,140 @@
-"use client";
-
 import Image from "next/image";
-import { useEffect, useState } from "react";
-import { createClient } from "@/lib/supabase/browser";
-import CopyProfileLinkButton from "@/components/CopyProfileLinkButton";
+import { createClient } from "@/lib/supabase/server";
+import { platforms } from "@/lib/platforms";
 
-export default function ProfilePage() {
-  const supabase = createClient();
+function formatExternalUrl(url: string) {
+  const trimmed = url.trim();
 
-  const [loading, setLoading] = useState(true);
-  const [saving, setSaving] = useState(false);
-  const [savedMessage, setSavedMessage] = useState("");
-  const [errorMessage, setErrorMessage] = useState("");
+  if (!trimmed) return "#";
 
-  const [username, setUsername] = useState("");
-  const [firstName, setFirstName] = useState("");
-  const [lastName, setLastName] = useState("");
-  const [email, setEmail] = useState("");
-  const [avatarUrl, setAvatarUrl] = useState("");
-  const [avatarFile, setAvatarFile] = useState<File | null>(null);
-  const [avatarPreview, setAvatarPreview] = useState("");
-
-  useEffect(() => {
-    async function loadProfile() {
-      const {
-        data: { user },
-      } = await supabase.auth.getUser();
-
-      if (!user) {
-        setLoading(false);
-        return;
-      }
-
-      const { data, error } = await supabase
-        .from("profiles")
-        .select("*")
-        .eq("id", user.id)
-        .single();
-
-      if (error) {
-        setErrorMessage(error.message);
-        setLoading(false);
-        return;
-      }
-
-      if (data) {
-        setUsername(data.username || "");
-        setFirstName(data.first_name || "");
-        setLastName(data.last_name || "");
-        setEmail(data.email || "");
-        setAvatarUrl(data.avatar_url || "");
-      }
-
-      setLoading(false);
-    }
-
-    loadProfile();
-  }, [supabase]);
-
-  function handleAvatarChange(e: React.ChangeEvent<HTMLInputElement>) {
-    const file = e.target.files?.[0];
-    if (!file) return;
-
-    setErrorMessage("");
-
-    const validTypes = ["image/png", "image/jpeg", "image/jpg", "image/webp"];
-    const maxSize = 2 * 1024 * 1024;
-
-    if (!validTypes.includes(file.type)) {
-      setErrorMessage("Please upload a PNG, JPG, or WEBP image.");
-      return;
-    }
-
-    if (file.size > maxSize) {
-      setErrorMessage("Image must be 2MB or smaller.");
-      return;
-    }
-
-    setAvatarFile(file);
-    setAvatarPreview(URL.createObjectURL(file));
+  if (trimmed.startsWith("http://") || trimmed.startsWith("https://")) {
+    return trimmed;
   }
 
-  async function uploadAvatar(userId: string) {
-    if (!avatarFile) return avatarUrl;
+  return `https://${trimmed}`;
+}
 
-    const fileExt = avatarFile.name.split(".").pop()?.toLowerCase() || "png";
-    const filePath = `${userId}/avatar-${Date.now()}.${fileExt}`;
+export default async function PublicProfilePage({
+  params,
+}: {
+  params: Promise<{ username: string }>;
+}) {
+  const { username } = await params;
+  const supabase = await createClient();
 
-    const { error: uploadError } = await supabase.storage
-      .from("avatars")
-      .upload(filePath, avatarFile, {
-        cacheControl: "3600",
-        upsert: true,
-      });
+  const normalizedUsername = username.trim().toLowerCase();
 
-    if (uploadError) {
-      throw new Error(uploadError.message);
-    }
+  const { data: profile, error: profileError } = await supabase
+    .from("profiles")
+    .select("*")
+    .ilike("username", normalizedUsername)
+    .single();
 
-    const { data } = supabase.storage.from("avatars").getPublicUrl(filePath);
-
-    return data.publicUrl;
-  }
-
-  async function saveProfile() {
-    const {
-      data: { user },
-    } = await supabase.auth.getUser();
-
-    if (!user) return;
-
-    setSaving(true);
-    setSavedMessage("");
-    setErrorMessage("");
-
-    try {
-      const normalizedUsername = username.trim().toLowerCase();
-      const uploadedAvatarUrl = await uploadAvatar(user.id);
-
-      const { error } = await supabase.from("profiles").upsert({
-        id: user.id,
-        username: normalizedUsername,
-        first_name: firstName.trim(),
-        last_name: lastName.trim(),
-        email: email.trim(),
-        avatar_url: uploadedAvatarUrl,
-      });
-
-      if (error) {
-        throw new Error(error.message);
-      }
-
-      setUsername(normalizedUsername);
-      setAvatarUrl(uploadedAvatarUrl || "");
-      setAvatarFile(null);
-      setSavedMessage("Your changes have been successfully saved!");
-
-      setTimeout(() => {
-        setSavedMessage("");
-      }, 2500);
-    } catch (error) {
-      const message =
-        error instanceof Error ? error.message : "Something went wrong.";
-      setErrorMessage(message);
-    } finally {
-      setSaving(false);
-    }
-  }
-
-  if (loading) {
+  if (profileError || !profile) {
     return (
-      <div className="flex min-h-[500px] items-center justify-center">
-        <p className="text-sm font-medium text-[#737373]">Loading profile...</p>
-      </div>
+      <main className="min-h-screen bg-[#FAFAFA] px-4 py-16">
+        <div className="mx-auto max-w-[349px] rounded-3xl bg-white p-10 text-center shadow-sm">
+          <h1 className="text-[24px] font-bold text-[#333333]">
+            Profile not found
+          </h1>
+          <p className="mt-3 text-sm text-[#737373]">
+            This profile does not exist or is no longer available.
+          </p>
+        </div>
+      </main>
     );
   }
 
-  const currentAvatar = avatarPreview || avatarUrl;
+  const { data: links } = await supabase
+    .from("links")
+    .select("*")
+    .eq("user_id", profile.id)
+    .order("sort_order", { ascending: true });
+
+  const fullName =
+    [profile.first_name, profile.last_name].filter(Boolean).join(" ").trim() ||
+    profile.username;
+
+  const themeColor = profile.theme_color || "#633CFF";
 
   return (
-    <section className="rounded-xl bg-white">
-      <div className="p-6 md:p-10">
-        <div className="flex flex-col gap-4 md:flex-row md:items-start md:justify-between">
-          <div>
-            <h1 className="text-[24px] font-bold leading-none text-[#333333] md:text-[32px]">
-              Profile Details
+    <main className="min-h-screen bg-[#FAFAFA]">
+      <div className="h-[357px] rounded-b-[32px]" style={{ backgroundColor: themeColor }} />
+
+      <div className="-mt-[220px] px-4 pb-16">
+        <div className="mx-auto w-full max-w-[349px] rounded-[24px] bg-white px-6 pb-12 pt-12 shadow-[0_0_32px_rgba(0,0,0,0.08)] md:px-10">
+          <div className="text-center">
+            <div
+              className="mx-auto mb-6 h-24 w-24 overflow-hidden rounded-full border-4 bg-[#EEEEEE]"
+              style={{ borderColor: themeColor }}
+            >
+              {profile.avatar_url ? (
+                <Image
+                  src={profile.avatar_url}
+                  alt={fullName}
+                  width={96}
+                  height={96}
+                  className="h-full w-full object-cover"
+                />
+              ) : null}
+            </div>
+
+            <h1 className="text-[32px] font-bold leading-[1.1] text-[#333333]">
+              {fullName}
             </h1>
-            <p className="mt-2 text-[16px] leading-[24px] text-[#737373]">
-              Add your details to create a personal touch to your profile.
+
+            <p className="mt-2 text-[16px] text-[#737373]">
+              @{profile.username}
             </p>
+
+            {profile.email ? (
+              <p className="mt-2 text-sm text-[#737373]">{profile.email}</p>
+            ) : null}
           </div>
 
-          {username ? <CopyProfileLinkButton username={username} /> : null}
-        </div>
+          <div className="mt-14 space-y-4">
+            {links && links.length > 0 ? (
+              links.map((link) => {
+                const platform = platforms[link.platform];
+                const Icon = platform?.icon;
 
-        <div className="mt-10 space-y-6">
-          <div className="rounded-xl bg-[#FAFAFA] p-5 md:p-6">
-            <div className="flex flex-col gap-4 md:grid md:grid-cols-[180px_1fr_180px] md:items-center">
-              <p className="text-sm text-[#737373]">Profile picture</p>
+                return (
+                  <a
+                    key={link.id}
+                    href={formatExternalUrl(link.url)}
+                    target="_blank"
+                    rel="noreferrer"
+                    className="flex min-h-[56px] items-center justify-between rounded-lg px-4 text-[16px] font-semibold transition hover:opacity-90"
+                    style={{
+                      backgroundColor: platform?.backgroundColor || themeColor,
+                      color: platform?.textColor || "#FFFFFF",
+                      border:
+                        platform?.backgroundColor === "#FFFFFF"
+                          ? "1px solid #D9D9D9"
+                          : "none",
+                    }}
+                  >
+                    <span className="flex min-w-0 items-center gap-3">
+                      {Icon ? <Icon size={18} /> : null}
+                      <span className="truncate">{link.platform}</span>
+                    </span>
 
-              <div className="flex items-center justify-center">
-                <label className="group flex h-[193px] w-[193px] cursor-pointer flex-col items-center justify-center overflow-hidden rounded-xl bg-[#EFEBFF] text-center transition hover:bg-[#e4dcff]">
-                  {currentAvatar ? (
-                    <Image
-                      src={currentAvatar}
-                      alt="Profile preview"
-                      width={193}
-                      height={193}
-                      className="h-full w-full object-cover"
-                    />
-                  ) : (
-                    <div className="flex flex-col items-center justify-center px-4">
-                      <div className="mb-4 h-12 w-12 rounded-full bg-[#633CFF]" />
-                      <span className="text-sm font-semibold text-[#633CFF]">
-                        + Upload Image
-                      </span>
-                    </div>
-                  )}
-
-                  <input
-                    type="file"
-                    accept="image/png,image/jpeg,image/jpg,image/webp"
-                    onChange={handleAvatarChange}
-                    className="hidden"
-                  />
-                </label>
+                    <span aria-hidden="true" className="shrink-0">
+                      →
+                    </span>
+                  </a>
+                );
+              })
+            ) : (
+              <div className="rounded-xl bg-[#FAFAFA] px-6 py-10 text-center">
+                <p className="text-sm text-[#737373]">
+                  No links have been added yet.
+                </p>
               </div>
-
-              <p className="text-sm leading-5 text-[#737373]">
-                Image should be under 2MB.
-                <br />
-                Use PNG, JPG, or WEBP format.
-              </p>
-            </div>
-          </div>
-
-          <div className="rounded-xl bg-[#FAFAFA] p-5 md:p-6">
-            <div className="space-y-6">
-              <div className="grid gap-2 md:grid-cols-[160px_1fr] md:items-center">
-                <label htmlFor="username" className="text-sm text-[#737373]">
-                  Username*
-                </label>
-                <input
-                  id="username"
-                  className="h-12 w-full rounded-lg border border-[#D9D9D9] bg-white px-4 text-sm text-[#333333] outline-none transition placeholder:text-[#737373] focus:border-[#633CFF] focus:ring-2 focus:ring-[#EFEBFF]"
-                  value={username}
-                  onChange={(e) => setUsername(e.target.value)}
-                  placeholder="yourusername"
-                />
-              </div>
-
-              <div className="grid gap-2 md:grid-cols-[160px_1fr] md:items-center">
-                <label htmlFor="firstName" className="text-sm text-[#737373]">
-                  First name*
-                </label>
-                <input
-                  id="firstName"
-                  className="h-12 w-full rounded-lg border border-[#D9D9D9] bg-white px-4 text-sm text-[#333333] outline-none transition placeholder:text-[#737373] focus:border-[#633CFF] focus:ring-2 focus:ring-[#EFEBFF]"
-                  value={firstName}
-                  onChange={(e) => setFirstName(e.target.value)}
-                  placeholder="Bryan"
-                />
-              </div>
-
-              <div className="grid gap-2 md:grid-cols-[160px_1fr] md:items-center">
-                <label htmlFor="lastName" className="text-sm text-[#737373]">
-                  Last name*
-                </label>
-                <input
-                  id="lastName"
-                  className="h-12 w-full rounded-lg border border-[#D9D9D9] bg-white px-4 text-sm text-[#333333] outline-none transition placeholder:text-[#737373] focus:border-[#633CFF] focus:ring-2 focus:ring-[#EFEBFF]"
-                  value={lastName}
-                  onChange={(e) => setLastName(e.target.value)}
-                  placeholder="Lordeus"
-                />
-              </div>
-
-              <div className="grid gap-2 md:grid-cols-[160px_1fr] md:items-center">
-                <label htmlFor="email" className="text-sm text-[#737373]">
-                  Email
-                </label>
-                <input
-                  id="email"
-                  className="h-12 w-full rounded-lg border border-[#D9D9D9] bg-white px-4 text-sm text-[#333333] outline-none transition placeholder:text-[#737373] focus:border-[#633CFF] focus:ring-2 focus:ring-[#EFEBFF]"
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                  placeholder="you@example.com"
-                  type="email"
-                />
-              </div>
-            </div>
+            )}
           </div>
         </div>
       </div>
-
-      <div className="border-t border-[#D9D9D9] p-4 md:flex md:items-center md:justify-between md:px-10 md:py-6">
-        <div className="mb-4 space-y-1 md:mb-0">
-          {savedMessage ? (
-            <p className="text-sm text-[#633CFF]">{savedMessage}</p>
-          ) : null}
-          {errorMessage ? (
-            <p className="text-sm text-[#FF3939]">{errorMessage}</p>
-          ) : null}
-        </div>
-
-        <button
-          onClick={saveProfile}
-          disabled={saving}
-          className="w-full rounded-lg bg-[#633CFF] px-6 py-3 text-[16px] font-semibold text-white transition hover:bg-[#7B5CFF] disabled:cursor-not-allowed disabled:opacity-50 md:w-auto"
-        >
-          {saving ? "Saving..." : "Save"}
-        </button>
-      </div>
-    </section>
+    </main>
   );
 }

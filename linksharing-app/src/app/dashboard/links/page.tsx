@@ -49,6 +49,7 @@ export default function LinksPage() {
   const [avatarUrl, setAvatarUrl] = useState("");
   const [toastMessage, setToastMessage] = useState("");
   const [toastType, setToastType] = useState<"success" | "error">("success");
+  const [themeColor, setThemeColor] = useState("#633CFF");
 
   function showToast(message: string, type: "success" | "error" = "success") {
     setToastMessage(message);
@@ -86,6 +87,7 @@ export default function LinksPage() {
     if (profile) {
       setUsername(profile.username || "");
       setAvatarUrl(profile.avatar_url || "");
+      setThemeColor(profile.theme_color || "#633CFF");
     }
 
     const { data, error } = await supabase
@@ -262,8 +264,8 @@ export default function LinksPage() {
 
   return (
     <>
-      <div className="flex flex-col gap-6 lg:flex-row">
-        <PhonePreview username={username} avatarUrl={avatarUrl} links={links} />
+      <div className="flex flex-col gap-8 lg:flex-row lg:items-start">
+        <PhonePreview username={username} avatarUrl={avatarUrl} themeColor={themeColor} links={links} />
 
         <section className="flex-1 rounded-xl bg-white">
           <div className="p-6 md:p-10">

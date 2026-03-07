@@ -46,15 +46,14 @@ export default function DashboardHeader() {
           </div>
         </Link>
 
-        {/* Nav */}
-        <nav className="flex items-center gap-2">
+        {/* Navigation */}
+        <nav className="flex items-center gap-1 md:gap-2">
           <Link href="/dashboard/links" className={navLinkClass(isLinks)}>
             <Image
               src="/assets/images/icon-links-header.svg"
               alt=""
               width={16}
               height={16}
-              aria-hidden="true"
             />
             <span className="hidden sm:inline">Links</span>
           </Link>
@@ -65,7 +64,6 @@ export default function DashboardHeader() {
               alt=""
               width={16}
               height={16}
-              aria-hidden="true"
             />
             <span className="hidden sm:inline">Profile Details</span>
           </Link>
@@ -77,18 +75,11 @@ export default function DashboardHeader() {
             href={pathname === "/preview" ? "/dashboard/links" : "/preview"}
             className="rounded-lg border border-[#633CFF] px-4 py-3 text-sm font-semibold text-[#633CFF] transition hover:bg-[#EFEBFF]"
           >
-            <span className="hidden sm:inline">Preview</span>
-            <span className="sm:hidden">Preview</span>
+            Preview
           </Link>
 
-          <div className="hidden md:block">
-            <LogoutButton />
-          </div>
+          <LogoutButton />
         </div>
-      </div>
-
-      <div className="mt-4 md:hidden">
-        <LogoutButton />
       </div>
     </header>
   );
