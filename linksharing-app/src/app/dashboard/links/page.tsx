@@ -80,7 +80,7 @@ export default function LinksPage() {
 
     const { data: profile } = await supabase
       .from("profiles")
-      .select("username, avatar_url")
+      .select("username, avatar_url, theme_color")
       .eq("id", user.id)
       .single();
 
