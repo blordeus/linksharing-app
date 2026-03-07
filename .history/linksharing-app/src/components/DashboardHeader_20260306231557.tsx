@@ -27,7 +27,7 @@ export default function DashboardHeader() {
         <Link href="/dashboard/links" className="shrink-0">
           <div className="hidden md:block">
             <Image
-              src="/assets/images/logo-devlinks-large.svg"
+              src="/linksharing-app/assets/images/logo-devlinks-large.svg"
               alt="devlinks"
               width={146}
               height={32}
@@ -37,7 +37,7 @@ export default function DashboardHeader() {
 
           <div className="block md:hidden">
             <Image
-              src="/assets/images/logo-devlinks-small.svg"
+              src="/images/logo-devlinks-small.svg"
               alt="devlinks"
               width={32}
               height={32}
@@ -50,7 +50,7 @@ export default function DashboardHeader() {
         <nav className="flex items-center gap-2">
           <Link href="/dashboard/links" className={navLinkClass(isLinks)}>
             <Image
-              src="/assets/images/icon-links-header.svg"
+              src="/images/icon-links-header.svg"
               alt=""
               width={16}
               height={16}
@@ -61,7 +61,7 @@ export default function DashboardHeader() {
 
           <Link href="/dashboard/profile" className={navLinkClass(isProfile)}>
             <Image
-              src="/assets/images/icon-profile-details-header.svg"
+              src="/images/icon-profile-details-header.svg"
               alt=""
               width={16}
               height={16}

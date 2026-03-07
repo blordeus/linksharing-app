@@ -61,7 +61,7 @@ export default function DashboardHeader() {
 
           <Link href="/dashboard/profile" className={navLinkClass(isProfile)}>
             <Image
-              src="/assets/images/icon-profile-details-header.svg"
+              src="/images/icon-profile-details-header.svg"
               alt=""
               width={16}
               height={16}

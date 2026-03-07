@@ -50,7 +50,7 @@ export default function DashboardHeader() {
         <nav className="flex items-center gap-2">
           <Link href="/dashboard/links" className={navLinkClass(isLinks)}>
             <Image
-              src="/assets/images/icon-links-header.svg"
+              src="/images/icon-links-header.svg"
               alt=""
               width={16}
               height={16}
@@ -61,7 +61,7 @@ export default function DashboardHeader() {
 
           <Link href="/dashboard/profile" className={navLinkClass(isProfile)}>
             <Image
-              src="/assets/images/icon-profile-details-header.svg"
+              src="/images/icon-profile-details-header.svg"
               alt=""
               width={16}
               height={16}

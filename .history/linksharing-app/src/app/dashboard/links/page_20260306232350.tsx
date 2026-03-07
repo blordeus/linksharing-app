@@ -280,7 +280,7 @@ export default function LinksPage() {
               <div className="rounded-xl bg-[#FAFAFA] px-5 py-12 text-center md:px-10 md:py-16">
                 <div className="mx-auto max-w-[250px]">
                   <Image
-                    src="/assets/images/illustration-empty.svg"
+                    src="/assets/illustration-empty.svg"
                     alt="No links yet"
                     width={250}
                     height={160}
