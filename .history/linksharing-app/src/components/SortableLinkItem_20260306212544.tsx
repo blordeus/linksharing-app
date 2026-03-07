@@ -34,21 +34,6 @@ const platformOptions = [
   "Stack Overflow",
 ];
 
-function getPlaceholder(platform: string) {
-  switch (platform) {
-    case "GitHub":
-      return "https://github.com/username";
-    case "LinkedIn":
-      return "https://www.linkedin.com/in/username";
-    case "YouTube":
-      return "https://www.youtube.com/@username";
-    case "Frontend Mentor":
-      return "https://www.frontendmentor.io/profile/username";
-    default:
-      return "https://example.com/username";
-  }
-}
-
 export default function SortableLinkItem({
   link,
   index,
@@ -133,7 +118,7 @@ export default function SortableLinkItem({
           value={link.url}
           onChange={(e) => onChange(link.id, "url", e.target.value)}
           className="h-12 w-full rounded-lg border border-[#D9D9D9] bg-white px-4 text-sm text-[#333333] outline-none transition placeholder:text-[#737373] focus:border-[#633CFF] focus:ring-2 focus:ring-[#EFEBFF]"
-          placeholder={getPlaceholder(link.platform)}
+          placeholder="https://www.github.com/username"
         />
       </div>
     </div>

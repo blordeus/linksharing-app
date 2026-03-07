@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
+import DashboardHeader from "@/components/DashboardHeader"
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -33,4 +34,20 @@ export default function RootLayout({
   );
 }
 
+export default function DashboardLayout({
+  children,
+}: {
+  children: React.ReactNode
+}) {
+  return (
+    <main className="min-h-screen bg-[#FAFAFA] p-4 md:p-6">
+      <div className="mx-auto max-w-7xl">
+        <DashboardHeader />
 
+        <section className="rounded-2xl bg-white p-6 shadow-sm md:p-8">
+          {children}
+        </section>
+      </div>
+    </main>
+  )
+}

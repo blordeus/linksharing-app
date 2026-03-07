@@ -133,7 +133,7 @@ export default function SortableLinkItem({
           value={link.url}
           onChange={(e) => onChange(link.id, "url", e.target.value)}
           className="h-12 w-full rounded-lg border border-[#D9D9D9] bg-white px-4 text-sm text-[#333333] outline-none transition placeholder:text-[#737373] focus:border-[#633CFF] focus:ring-2 focus:ring-[#EFEBFF]"
-          placeholder={getPlaceholder(link.platform)}
+          placeholder="https://www.github.com/username"
         />
       </div>
     </div>
