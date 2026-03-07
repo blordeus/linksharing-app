@@ -1,191 +1,197 @@
-
 # Link Sharing App
 
-A full-stack link sharing platform where users can create a profile, manage their links, and share a public page containing all of their social and professional links.
+A full-stack link sharing application that allows users to create a
+customizable public profile containing links to their social platforms.
 
-Live app:
+Users can manage links, upload a profile avatar, customize a theme
+color, and share a public profile page.
 
+Live App\
 https://linksharing-app-five.vercel.app
 
-Users can build a profile, add links to various platforms, and share a public page such as:
+------------------------------------------------------------------------
 
-https://linksharing-app-five.vercel.app/u/username
+## Features
 
----
+### Authentication
 
-# Features
+-   Supabase email authentication
+-   Protected dashboard routes using middleware
 
-## Authentication
-- User signup and login
-- Session handling with Supabase Auth
-- Protected dashboard routes using middleware
+### Link Management
 
-## Profile Management
-- Edit username
-- Add first name and last name
-- Store email information
-- Copy public profile link
+-   Add, edit, remove links
+-   Drag-and-drop link reordering
+-   Automatic URL normalization
+-   Platform icons and branded button colors
 
-## Link Management
-- Add multiple platform links
-- Edit existing links
-- Delete links
-- Automatic URL normalization
-- Ordered links stored in the database
+### Profile Customization
 
-## Public Profile Page
-Each user gets a shareable page displaying their profile and links.
+-   Username and profile details editor
+-   Avatar upload using Supabase Storage
+-   Theme color customization
+-   Copy profile link functionality
 
-Example:
-/u/username
+### Preview System
 
-Links open the associated platforms in a new tab.
+-   Live phone preview inside the dashboard
+-   Dedicated preview page for final profile
+-   Public profile page at `/u/[username]`
 
-## Live Preview
-The dashboard includes a phone preview showing how the public profile will appear.
+### UI / UX Improvements
 
-## Deployment
-The application is deployed on **Vercel** and uses **Supabase** for backend services.
+-   Responsive layout
+-   Empty states and loading states
+-   Toast notifications for save actions
+-   Styled phone mockup preview
+-   Clean dashboard layout
 
----
+------------------------------------------------------------------------
 
-# Tech Stack
+## Tech Stack
 
-## Frontend
-- Next.js (App Router)
-- React
-- Tailwind CSS
+### Frontend
 
-## Backend
-- Supabase Auth
-- Supabase Postgres
-- Supabase SSR Client
+-   Next.js 14 (App Router)
+-   React
+-   Tailwind CSS
+-   dnd-kit (drag and drop)
 
-## Deployment
-- Vercel
+### Backend
 
----
+-   Supabase Authentication
+-   Supabase PostgreSQL
+-   Supabase Storage (avatars)
 
-# Project Structure
+### Deployment
 
-src
- ├ app
- │ ├ dashboard
- │ │ ├ links
- │ │ └ profile
- │ ├ login
- │ ├ signup
- │ ├ u
- │ │ └ [username]
- │ └ page.tsx
- │
- ├ components
- │ ├ CopyProfileLinkButton
- │ ├ LogoutButton
- │ ├ PhonePreview
- │
- ├ lib
- │ └ supabase
- │    ├ browser.ts
- │    └ server.ts
- │
- └ middleware.ts
+-   Vercel
 
----
+### Icons
 
-# Database Schema
+-   React Icons
 
-## profiles
+------------------------------------------------------------------------
 
-| column | description |
-|------|------|
-| id | Supabase auth user id |
-| username | public profile identifier |
-| first_name | user first name |
-| last_name | user last name |
-| email | user email |
-| avatar_url | (future enhancement) |
+## Architecture
 
-## links
+    Next.js App Router
+    │
+    ├── Dashboard
+    │   ├── Links Editor
+    │   ├── Profile Editor
+    │   └── Live Phone Preview
+    │
+    ├── Public Profile
+    │   └── /u/[username]
+    │
+    ├── Preview Page
+    │
+    └── Supabase
+        ├── Auth
+        ├── Profiles Table
+        ├── Links Table
+        └── Avatar Storage
 
-| column | description |
-|------|------|
-| id | unique link id |
-| user_id | reference to profile |
-| platform | platform name |
-| url | external link |
-| sort_order | ordering index |
+------------------------------------------------------------------------
 
----
+## Database Schema
 
-# Environment Variables
+### profiles
 
-Create a `.env.local` file:
+    id (uuid)
+    username (text)
+    first_name (text)
+    last_name (text)
+    email (text)
+    avatar_url (text)
+    theme_color (text)
 
-NEXT_PUBLIC_SUPABASE_URL=
-NEXT_PUBLIC_SUPABASE_ANON_KEY=
+### links
 
-These values come from your Supabase project settings.
+    id (uuid)
+    user_id (uuid)
+    platform (text)
+    url (text)
+    sort_order (integer)
 
----
+------------------------------------------------------------------------
 
-# Running the Project Locally
+## Local Development
+
+Clone the repository:
+
+    git clone https://github.com/YOUR_USERNAME/link-sharing-app.git
+    cd link-sharing-app
 
 Install dependencies:
 
-yarn install
+    npm install
+
+Create `.env.local`:
+
+    NEXT_PUBLIC_SUPABASE_URL=your_url
+    NEXT_PUBLIC_SUPABASE_ANON_KEY=your_key
 
 Run the development server:
 
-yarn dev
+    npm run dev
 
-The app will run at:
+------------------------------------------------------------------------
 
-http://localhost:3000
+## Environment Variables
 
----
+    NEXT_PUBLIC_SUPABASE_URL
+    NEXT_PUBLIC_SUPABASE_ANON_KEY
 
-# Authentication Configuration
+------------------------------------------------------------------------
 
-In Supabase, configure:
+## Project Structure
 
-Site URL:
-https://linksharing-app-five.vercel.app
+    app
+     ├ dashboard
+     │  ├ links
+     │  └ profile
+     │
+     ├ preview
+     │
+     └ u
+        └ [username]
 
-Redirect URLs:
-http://localhost:3000/**
-https://linksharing-app-five.vercel.app/**
+    components
+     ├ PhonePreview
+     ├ SortableLinkItem
+     ├ Toast
+     └ CopyProfileLinkButton
 
----
+    lib
+     ├ supabase
+     └ platforms
 
-# Deployment
+------------------------------------------------------------------------
 
-The project is deployed with **Vercel**.
+## What This Project Demonstrates
 
-Steps:
+-   Full-stack Next.js application architecture
+-   Supabase authentication and database integration
+-   File uploads using Supabase Storage
+-   Drag-and-drop UI with persistent ordering
+-   Dynamic public routing
+-   Responsive UI design
+-   Component-driven architecture
 
-1. Push repository to GitHub
-2. Import the project into Vercel
-3. Add environment variables
-4. Deploy
+------------------------------------------------------------------------
 
-Vercel automatically builds and deploys the Next.js application.
+## Future Improvements
 
----
+-   Analytics for profile visits
+-   Additional social platform integrations
+-   Custom profile themes
+-   QR code sharing
+-   Link click tracking
 
-# Future Improvements
+------------------------------------------------------------------------
 
-Planned UI and feature enhancements:
+## License
 
-- Platform icons and branded link buttons
-- Profile image upload using Supabase Storage
-- Improved mobile responsiveness
-- Visual polish to match the Frontend Mentor design
-- Drag-and-drop link ordering
-- Enhanced preview component
-
----
-
-# License
-
-This project was built as part of a Frontend Mentor challenge and is intended for educational and portfolio use.
+MIT
