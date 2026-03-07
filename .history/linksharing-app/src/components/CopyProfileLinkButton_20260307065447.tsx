@@ -40,7 +40,7 @@ export default function CopyProfileLinkButton({ username, label = "Copy ProfileL
 disabled:border-slate-300
 disabled:text-slate-400`}
     >
-      {copied ? "Link Copied!" : label}
+      {copied ? "Link Copied!" : "Copy Profile Link"}
     </button>
   );
 }

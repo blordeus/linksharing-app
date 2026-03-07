@@ -39,32 +39,33 @@ function normalizeUrl(url: string) {
   return `https://${trimmed}`;
 }
 
+function showToast(message: string, type: "success" | "error" = "success") {
+  setToastMessage(message);
+  setToastType(type);
+
+  setTimeout(() => {
+    setToastMessage("");
+  }, 2500);
+}
+
 export default function LinksPage() {
   const supabase = createClient();
 
   const [links, setLinks] = useState<Link[]>([]);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
+  const [savedMessage, setSavedMessage] = useState("");
   const [username, setUsername] = useState("");
   const [avatarUrl, setAvatarUrl] = useState("");
   const [toastMessage, setToastMessage] = useState("");
   const [toastType, setToastType] = useState<"success" | "error">("success");
-
-  function showToast(message: string, type: "success" | "error" = "success") {
-    setToastMessage(message);
-    setToastType(type);
-
-    setTimeout(() => {
-      setToastMessage("");
-    }, 2500);
-  }
 
   const sensors = useSensors(
     useSensor(PointerSensor, {
       activationConstraint: {
         distance: 8,
       },
-    })
+    }),
   );
 
   const loadLinks = useCallback(async () => {
@@ -78,15 +79,15 @@ export default function LinksPage() {
     }
 
     const { data: profile } = await supabase
-      .from("profiles")
-      .select("username, avatar_url")
-      .eq("id", user.id)
-      .single();
+    .from("profiles")
+    .select("username, avatar_url")
+    .eq("id", user.id)
+    .single();
 
-    if (profile) {
-      setUsername(profile.username || "");
-      setAvatarUrl(profile.avatar_url || "");
-    }
+  if (profile) {
+    setUsername(profile.username || "");
+    setAvatarUrl(profile.avatar_url || "");
+  }
 
     const { data, error } = await supabase
       .from("links")
@@ -127,7 +128,7 @@ export default function LinksPage() {
 
   function updateLink(id: string, field: "platform" | "url", value: string) {
     setLinks((prev) =>
-      prev.map((link) => (link.id === id ? { ...link, [field]: value } : link))
+      prev.map((link) => (link.id === id ? { ...link, [field]: value } : link)),
     );
   }
 
@@ -138,7 +139,7 @@ export default function LinksPage() {
         .map((link, index) => ({
           ...link,
           sort_order: index,
-        }))
+        })),
     );
   }
 
@@ -162,6 +163,7 @@ export default function LinksPage() {
 
   async function saveLinks() {
     setSaving(true);
+    setSavedMessage("");
 
     const {
       data: { user },
@@ -178,7 +180,7 @@ export default function LinksPage() {
       .eq("user_id", user.id);
 
     if (currentError) {
-      showToast(currentError.message, "error");
+      alert(currentError.message);
       setSaving(false);
       return;
     }
@@ -198,7 +200,7 @@ export default function LinksPage() {
         .in("id", idsToDelete);
 
       if (deleteError) {
-        showToast(deleteError.message, "error");
+        alert(deleteError.message);
         setSaving(false);
         return;
       }
@@ -220,7 +222,7 @@ export default function LinksPage() {
         .upsert(existingRows);
 
       if (updateError) {
-        showToast(updateError.message, "error");
+        alert(updateError.message);
         setSaving(false);
         return;
       }
@@ -241,7 +243,7 @@ export default function LinksPage() {
         .insert(newRows);
 
       if (insertError) {
-        showToast(insertError.message, "error");
+        alert(insertError.message);
         setSaving(false);
         return;
       }
@@ -249,7 +251,11 @@ export default function LinksPage() {
 
     await loadLinks();
     setSaving(false);
-    showToast("Your changes have been successfully saved!");
+    setSavedMessage("Your changes have been successfully saved!");
+
+    setTimeout(() => {
+      setSavedMessage("");
+    }, 2500);
   }
 
   if (loading) {
@@ -261,90 +267,90 @@ export default function LinksPage() {
   }
 
   return (
-    <>
-      <div className="flex flex-col gap-6 lg:flex-row">
-        <PhonePreview username={username} avatarUrl={avatarUrl} links={links} />
+    <div className="flex flex-col gap-6 lg:flex-row">
+      <PhonePreview username={username} avatarUrl={avatarUrl} links={links} />
 
-        <section className="flex-1 rounded-xl bg-white">
-          <div className="p-6 md:p-10">
-            <h1 className="text-[24px] font-bold leading-none text-[#333333] md:text-[32px]">
-              Customize your links
-            </h1>
+      <section className="flex-1 rounded-xl bg-white">
+        <div className="p-6 md:p-10">
+          <h1 className="text-[24px] font-bold leading-none text-[#333333] md:text-[32px]">
+            Customize your links
+          </h1>
 
-            <p className="mt-2 text-[16px] leading-[24px] text-[#737373]">
-              Add, edit, remove, and reorder your links below.
-            </p>
+          <p className="mt-2 text-[16px] leading-[24px] text-[#737373]">
+            Add, edit, remove, and reorder your links below.
+          </p>
 
-            <button
-              onClick={addLink}
-              className="mt-10 w-full rounded-lg border border-[#633CFF] px-4 py-3 text-[16px] font-semibold text-[#633CFF] transition hover:bg-[#EFEBFF]"
-            >
-              + Add new link
-            </button>
+          <button
+            onClick={addLink}
+            className="mt-10 w-full rounded-lg border border-[#633CFF] px-4 py-3 text-[16px] font-semibold text-[#633CFF] transition hover:bg-[#EFEBFF]"
+          >
+            + Add new link
+          </button>
 
-            <div className="mt-6">
-              {links.length === 0 ? (
-                <div className="rounded-xl bg-[#FAFAFA] px-5 py-12 text-center md:px-10 md:py-16">
-                  <div className="mx-auto max-w-[250px]">
-                    <Image
-                      src="/assets/images/illustration-empty.svg"
-                      alt="No links yet"
-                      width={250}
-                      height={160}
-                      className="mx-auto h-auto w-full"
-                    />
-                  </div>
-
-                  <h2 className="mt-10 text-[24px] font-bold text-[#333333]">
-                    Let’s get you started
-                  </h2>
-
-                  <p className="mx-auto mt-6 max-w-[488px] text-[16px] leading-[24px] text-[#737373]">
-                    Use the “Add new link” button to get started. Once you have
-                    more than one link, you can reorder and edit them. We’re here
-                    to help you share your profiles with everyone.
-                  </p>
+          <div className="mt-6">
+            {links.length === 0 ? (
+              <div className="rounded-xl bg-[#FAFAFA] px-5 py-12 text-center md:px-10 md:py-16">
+                <div className="mx-auto max-w-[250px]">
+                  <Image
+                    src="/assets/images/illustration-empty.svg"
+                    alt="No links yet"
+                    width={250}
+                    height={160}
+                    className="mx-auto h-auto w-full"
+                  />
                 </div>
-              ) : (
-                <DndContext
-                  sensors={sensors}
-                  collisionDetection={closestCenter}
-                  onDragEnd={handleDragEnd}
+
+                <h2 className="mt-10 text-[24px] font-bold text-[#333333]">
+                  Let’s get you started
+                </h2>
+
+                <p className="mx-auto mt-6 max-w-[488px] text-[16px] leading-[24px] text-[#737373]">
+                  Use the “Add new link” button to get started. Once you have
+                  more than one link, you can reorder and edit them. We’re here
+                  to help you share your profiles with everyone.
+                </p>
+              </div>
+            ) : (
+              <DndContext
+                sensors={sensors}
+                collisionDetection={closestCenter}
+                onDragEnd={handleDragEnd}
+              >
+                <SortableContext
+                  items={links.map((link) => link.id)}
+                  strategy={verticalListSortingStrategy}
                 >
-                  <SortableContext
-                    items={links.map((link) => link.id)}
-                    strategy={verticalListSortingStrategy}
-                  >
-                    <div className="space-y-6">
-                      {links.map((link, index) => (
-                        <SortableLinkItem
-                          key={link.id}
-                          link={link}
-                          index={index}
-                          onChange={updateLink}
-                          onRemove={removeLink}
-                        />
-                      ))}
-                    </div>
-                  </SortableContext>
-                </DndContext>
-              )}
-            </div>
+                  <div className="space-y-6">
+                    {links.map((link, index) => (
+                      <SortableLinkItem
+                        key={link.id}
+                        link={link}
+                        index={index}
+                        onChange={updateLink}
+                        onRemove={removeLink}
+                      />
+                    ))}
+                  </div>
+                </SortableContext>
+              </DndContext>
+            )}
+          </div>
+        </div>
+
+        <div className="border-t border-[#D9D9D9] p-4 md:flex md:items-center md:justify-between md:px-10 md:py-6">
+          <div className="mb-4 text-sm text-[#633CFF] md:mb-0">
+            {savedMessage}
           </div>
 
-          <div className="border-t border-[#D9D9D9] p-4 md:flex md:items-center md:justify-end md:px-10 md:py-6">
-            <button
-              onClick={saveLinks}
-              disabled={saving || links.length === 0}
-              className="w-full rounded-lg bg-[#633CFF] px-6 py-3 text-[16px] font-semibold text-white transition hover:bg-[#7B5CFF] disabled:cursor-not-allowed disabled:opacity-50 md:w-auto"
-            >
-              {saving ? "Saving..." : "Save"}
-            </button>
-          </div>
-        </section>
-      </div>
-
-      <Toast message={toastMessage} type={toastType} />
-    </>
+          <button
+            onClick={saveLinks}
+            disabled={saving || links.length === 0}
+            className="w-full rounded-lg bg-[#633CFF] px-6 py-3 text-[16px] font-semibold text-white transition hover:bg-[#7B5CFF] disabled:cursor-not-allowed disabled:opacity-50 md:w-auto"
+          >
+            {saving ? "Saving..." : "Save"}
+          </button>
+        </div>
+      </section>
+    </div>
   );
 }
