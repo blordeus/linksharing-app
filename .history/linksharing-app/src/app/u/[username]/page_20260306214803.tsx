@@ -32,17 +32,11 @@ export default function ProfilePage() {
         return;
       }
 
-      const { data, error } = await supabase
+      const { data } = await supabase
         .from("profiles")
         .select("*")
         .eq("id", user.id)
         .single();
-
-      if (error) {
-        setErrorMessage(error.message);
-        setLoading(false);
-        return;
-      }
 
       if (data) {
         setUsername(data.username || "");

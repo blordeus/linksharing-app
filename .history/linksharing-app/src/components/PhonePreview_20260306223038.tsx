@@ -88,10 +88,6 @@ export default function PhonePreview({ username, avatarUrl, links }: Props) {
       style={{
         backgroundColor: platformData.backgroundColor,
         color: platformData.textColor,
-        border:
-          platformData.backgroundColor === "#FFFFFF"
-            ? "1px solid #D9D9D9"
-            : "none",
       }}
     >
       <span className="flex min-w-0 items-center gap-2">

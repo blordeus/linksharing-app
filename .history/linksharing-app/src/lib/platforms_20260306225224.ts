@@ -7,7 +7,6 @@ import {
   FaFacebook,
   FaTwitch,
   FaGitlab,
-  // FaHashnode,
   FaFreeCodeCamp,
   FaStackOverflow,
   FaCodepen,

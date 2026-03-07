@@ -7,7 +7,6 @@ import {
   FaFacebook,
   FaTwitch,
   FaGitlab,
-  // FaHashnode,
   FaFreeCodeCamp,
   FaStackOverflow,
   FaCodepen,
@@ -82,11 +81,11 @@ export const platforms: Record<
     backgroundColor: "#EB4925",
     textColor: "#FFFFFF",
   },
-  // Hashnode: {
-  //   icon: FaHashnode,
-  //   backgroundColor: "#0330D1",
-  //   textColor: "#FFFFFF",
-  // },
+  Hashnode: {
+    icon: FaHashnode,
+    backgroundColor: "#0330D1",
+    textColor: "#FFFFFF",
+  },
   "Stack Overflow": {
     icon: FaStackOverflow,
     backgroundColor: "#EC7100",

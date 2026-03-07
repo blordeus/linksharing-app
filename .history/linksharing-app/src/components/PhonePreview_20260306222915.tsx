@@ -75,32 +75,32 @@ export default function PhonePreview({ username, avatarUrl, links }: Props) {
                 <div key={i} className="h-11 rounded-lg bg-[#EEEEEE]" />
               ))
             : links.slice(0, 5).map((link) => {
-  const platformData = getPlatformData(link.platform);
-  const Icon = "icon" in platformData ? platformData.icon : null;
+                const platformData = getPlatformData(link.platform);
+                const Icon = platformData.icon;
 
-  return (
-    <a
-      key={link.id}
-      href={formatPreviewUrl(link.url)}
-      target="_blank"
-      rel="noreferrer"
-      className="flex h-11 items-center justify-between rounded-lg px-4 text-sm font-medium transition hover:scale-[1.01]"
-      style={{
-        backgroundColor: platformData.backgroundColor,
-        color: platformData.textColor,
-        border:
-          platformData.backgroundColor === "#FFFFFF"
-            ? "1px solid #D9D9D9"
-            : "none",
-      }}
-    >
-      <span className="flex min-w-0 items-center gap-2">
-        {Icon ? <Icon size={16} /> : null}
-        <span className="truncate">{link.platform}</span>
-      </span>
+                return (
+                  <a
+                    key={link.id}
+                    href={formatPreviewUrl(link.url)}
+                    target="_blank"
+                    rel="noreferrer"
+                    className="flex h-11 items-center justify-between rounded-lg px-4 text-sm font-medium transition hover:scale-[1.01]"
+                    style={{
+                      backgroundColor: platformData.backgroundColor,
+                      color: platformData.color,
+                      border:
+                        platformData.backgroundColor === "#FFFFFF"
+                          ? "1px solid #D9D9D9"
+                          : "none",
+                    }}
+                  >
+                    <span className="flex min-w-0 items-center gap-2">
+                      {Icon ? <Icon size={16} /> : null}
+                      <span className="truncate">{link.platform}</span>
+                    </span>
 
-      <span aria-hidden="true">→</span>
-    </a>
+                    <span aria-hidden="true">→</span>
+                  </a>
                 );
               })}
         </div>
