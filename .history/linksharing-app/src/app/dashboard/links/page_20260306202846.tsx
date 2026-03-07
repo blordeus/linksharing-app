@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { createClient } from "@/lib/supabase/browser";
 import PhonePreview from "@/components/PhonePreview";
 import SortableLinkItem from "@/components/SortableLinkItem";
@@ -52,7 +52,7 @@ export default function LinksPage() {
     })
   );
 
-  const loadLinks = useCallback(async () => {
+  async function loadLinks() {
     const {
       data: { user },
     } = await supabase.auth.getUser();
@@ -76,7 +76,7 @@ export default function LinksPage() {
 
     setLinks(data ?? []);
     setLoading(false);
-  }, [supabase]);
+  }
 
   useEffect(() => {
     // schedule the load asynchronously so state updates don’t happen
@@ -85,7 +85,7 @@ export default function LinksPage() {
       await Promise.resolve();
       await loadLinks();
     })();
-  }, [loadLinks]);
+  }, []);
 
   function addLink() {
     const tempId = `temp-${Date.now()}-${Math.random().toString(36).slice(2)}`;

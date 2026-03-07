@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { createClient } from "@/lib/supabase/browser";
 import PhonePreview from "@/components/PhonePreview";
 import SortableLinkItem from "@/components/SortableLinkItem";
