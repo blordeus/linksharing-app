@@ -11,7 +11,7 @@ import { ComponentType } from "react"
 export const platforms: Record<
   string,
   {
-    icon: ComponentType<{ size: number }>
+    icon: ComponentType
     color: string
   }
 > = {

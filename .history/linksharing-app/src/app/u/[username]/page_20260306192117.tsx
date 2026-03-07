@@ -65,7 +65,17 @@ export default async function PublicProfilePage({
       return (
         <a
           key={link.id}
-          href={formatExternalUrl(link.url)}
+          href={function formatExternalUrl(url: string) {
+  const trimmed = url.trim();
+
+  if (!trimmed) return "#";
+
+  if (trimmed.startsWith("http://") || trimmed.startsWith("https://")) {
+    return trimmed;
+  }
+
+  return `https://${trimmed}`;
+}}
           target="_blank"
           rel="noreferrer"
           className={`flex items-center justify-center gap-2 rounded-lg py-3 font-medium text-white ${

@@ -30,29 +30,29 @@ export default function LinksPage() {
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false)
 
+  async function loadLinks() {
+    const {
+      data: { user },
+    } = await supabase.auth.getUser();
+
+    if (!user) return;
+
+    const { data } = await supabase
+      .from("links")
+      .select("*")
+      .eq("user_id", user.id)
+      .order("sort_order");
+
+    if (data) {
+      setLinks(data);
+    }
+
+    setLoading(false);
+  }
+
   useEffect(() => {
-    const loadLinks = async () => {
-      const {
-        data: { user },
-      } = await supabase.auth.getUser();
-
-      if (!user) return;
-
-      const { data } = await supabase
-        .from("links")
-        .select("*")
-        .eq("user_id", user.id)
-        .order("sort_order");
-
-      if (data) {
-        setLinks(data);
-      }
-
-      setLoading(false);
-    };
-
     loadLinks();
-  }, [supabase]);
+  }, []);
 
   function addLink() {
   const tempId = `temp-${Date.now()}`
@@ -166,29 +166,9 @@ export default function LinksPage() {
       }
     }
 
-  await loadLinksAfterSave();
+  await loadLinks();
   setSaving(false);
   alert("Links saved");
-}
-
-async function loadLinksAfterSave() {
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
-
-  if (!user) return;
-
-  const { data } = await supabase
-    .from("links")
-    .select("*")
-    .eq("user_id", user.id)
-    .order("sort_order");
-
-  if (data) {
-    setLinks(data);
-  }
-
-  setLoading(false);
 }
 
 if (loading) {

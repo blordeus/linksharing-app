@@ -52,7 +52,7 @@ export default function LinksPage() {
     };
 
     loadLinks();
-  }, [supabase]);
+  }, []);
 
   function addLink() {
   const tempId = `temp-${Date.now()}`

@@ -11,17 +11,7 @@ type Link = {
   sort_order: number;
 };
 
-function normalizeUrl(url: string) {
-  const trimmed = url.trim();
 
-  if (!trimmed) return "";
-
-  if (trimmed.startsWith("http://") || trimmed.startsWith("https://")) {
-    return trimmed;
-  }
-
-  return `https://${trimmed}`;
-}
 
 export default function LinksPage() {
   const supabase = createClient();
@@ -31,28 +21,28 @@ export default function LinksPage() {
   const [saving, setSaving] = useState(false)
 
   useEffect(() => {
-    const loadLinks = async () => {
-      const {
-        data: { user },
-      } = await supabase.auth.getUser();
-
-      if (!user) return;
-
-      const { data } = await supabase
-        .from("links")
-        .select("*")
-        .eq("user_id", user.id)
-        .order("sort_order");
-
-      if (data) {
-        setLinks(data);
-      }
-
-      setLoading(false);
-    };
-
     loadLinks();
-  }, [supabase]);
+  }, []);
+
+  async function loadLinks() {
+    const {
+      data: { user },
+    } = await supabase.auth.getUser();
+
+    if (!user) return;
+
+    const { data } = await supabase
+      .from("links")
+      .select("*")
+      .eq("user_id", user.id)
+      .order("sort_order");
+
+    if (data) {
+      setLinks(data);
+    }
+
+    setLoading(false);
+  }
 
   function addLink() {
   const tempId = `temp-${Date.now()}`
@@ -123,14 +113,14 @@ export default function LinksPage() {
 
     // 4) Update existing rows
     const existingRows = links
-  .filter((link) => !link.id.startsWith("temp-"))
-  .map((link, index) => ({
-    id: link.id,
-    user_id: user.id,
-    platform: link.platform,
-    url: normalizeUrl(link.url),
-    sort_order: index,
-  }));
+      .filter((link) => !link.id.startsWith("temp-"))
+      .map((link, index) => ({
+        id: link.id,
+        user_id: user.id,
+        platform: link.platform,
+        url: link.url,
+        sort_order: index,
+      }));
 
     if (existingRows.length > 0) {
       const { error: updateError } = await supabase
@@ -146,13 +136,13 @@ export default function LinksPage() {
 
     // 5) Insert new rows WITHOUT id so DB generates uuid
     const newRows = links
-  .filter((link) => link.id.startsWith("temp-"))
-  .map((link, index) => ({
-    user_id: user.id,
-    platform: link.platform,
-    url: normalizeUrl(link.url),
-    sort_order: index,
-  }));
+      .filter((link) => link.id.startsWith("temp-"))
+      .map((link, index) => ({
+        user_id: user.id,
+        platform: link.platform,
+        url: link.url,
+        sort_order: index,
+      }));
 
     if (newRows.length > 0) {
       const { error: insertError } = await supabase
@@ -166,29 +156,9 @@ export default function LinksPage() {
       }
     }
 
-  await loadLinksAfterSave();
+  await loadLinks();
   setSaving(false);
   alert("Links saved");
-}
-
-async function loadLinksAfterSave() {
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
-
-  if (!user) return;
-
-  const { data } = await supabase
-    .from("links")
-    .select("*")
-    .eq("user_id", user.id)
-    .order("sort_order");
-
-  if (data) {
-    setLinks(data);
-  }
-
-  setLoading(false);
 }
 
 if (loading) {

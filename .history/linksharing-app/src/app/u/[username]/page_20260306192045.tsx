@@ -65,7 +65,7 @@ export default async function PublicProfilePage({
       return (
         <a
           key={link.id}
-          href={formatExternalUrl(link.url)}
+          href={link.url}
           target="_blank"
           rel="noreferrer"
           className={`flex items-center justify-center gap-2 rounded-lg py-3 font-medium text-white ${

@@ -72,7 +72,7 @@ export default async function PublicProfilePage({
             platform?.color || "bg-black"
           }`}
         >
-          {Icon && <Icon size={18} />}
+          {Icon && <Icon size={18} as any />}
           {link.platform}
         </a>
       )

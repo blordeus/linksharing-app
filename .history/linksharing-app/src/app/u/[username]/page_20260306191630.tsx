@@ -65,14 +65,14 @@ export default async function PublicProfilePage({
       return (
         <a
           key={link.id}
-          href={formatExternalUrl(link.url)}
+          href={link.url}
           target="_blank"
           rel="noreferrer"
           className={`flex items-center justify-center gap-2 rounded-lg py-3 font-medium text-white ${
             platform?.color || "bg-black"
           }`}
         >
-          {Icon && <Icon size={18} />}
+          {Icon && <Icon width={18} height={18} />}
           {link.platform}
         </a>
       )
